@@ -168,58 +168,64 @@ public class Tile extends Screen {
     if (onSide != 2 && onBottom != 1) {
       Main.Tiles.get(ID + Main.GAME_SIZE + 1).leftClick();
     }
-    getFrame().repaint();
   }
   
   private void leftClick() {
-    if (!getMine() && !exposed) {
-      exposed = true;
-      changeImage(squareImage, "Images/Minesweeper" + numNeighbors + ".png");
-      scaleImage(squareSize,squareSize, squareImage);
-      if (numNeighbors == 0) {
-        explodeAnimation();
-        exposeNeighbors();
+    if (Main.winLose == 0) {
+      if (!getMine() && !exposed) {
+        exposed = true;
+        if (numNeighbors == 0) {
+          changeImage(squareImage, "Images/MinesweeperFire.png");
+          Timer timer = new Timer();
+          timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+              changeImage(squareImage, "Images/Minesweeper" + numNeighbors + ".png");
+              getFrame().repaint();
+            }
+          }, 500);
+          exposeNeighbors();
+        } else changeImage(squareImage, "Images/Minesweeper" + numNeighbors + ".png");
+        scaleImage(squareSize, squareSize, squareImage);
       }
-    }
-    if (getMine() && !exposed) {
-      exposed = true;
-      changeImage(squareImage, "Images/Mine.png");
-      scaleImage(squareSize, squareSize, squareImage);
-      System.out.println("You have lost! Win/lose process is a work in progress.");
+      if (getMine() && !exposed) {
+        exposed = true;
+        for (int i = 0; i < Main.Tiles.size(); i++) {
+          if (Main.Tiles.get(i).hasMine) {
+            changeImage(Main.Tiles.get(i).squareImage, "Images/Mine.png");
+            scaleImage(squareSize, squareSize, Main.Tiles.get(i).squareImage);
+          }
+        }
+        Main.winLose = 1;
+        System.out.println("You lost!");
+      }
     }
   }
 
   private void rightClick() {
-    if (!exposed && !flag) {
-      changeImage(squareImage, "Images/MinesweeperFlag.png");
-      scaleImage(squareSize, squareSize, squareImage);
-      flag = true;
-    }
-    else if (!exposed && flag) {
-      changeImage(squareImage, "Images/MinesweeperUnknown.png");
-      scaleImage(squareSize, squareSize, squareImage);
-      flag = false;
-    }
-    square.repaint();
-  }
-
-  private void explodeAnimation() {
-    ImageIcon explosionImage = new ImageIcon("Images/MinesweeperFire.png");
-    JLabel explosion = new JLabel(explosionImage);
-    Timer timer = new Timer();
-    scaleImage(squareSize, squareSize + squareSize / Main.BUFFER_SIZE, explosionImage);
-    getFrame().add(explosion);
-    explosion.setBounds(square.getX(), square.getY() - squareSize / Main.BUFFER_SIZE + squareSize, squareSize, squareSize + squareSize / Main.BUFFER_SIZE);
-    explosion.setVisible(true);
-    getFrame().setComponentZOrder(explosion, 0);
-    getFrame().repaint();
-    timer.schedule(new TimerTask() {
-      @Override
-      public void run() {
-        explosion.setVisible(false);
-        getFrame().remove(explosion);
+    if (Main.winLose == 0) {
+      if (!exposed && !flag) {
+        changeImage(squareImage, "Images/MinesweeperFlag.png");
+        scaleImage(squareSize, squareSize, squareImage);
+        flag = true;
+        boolean win = true;
+        for (int i = 0; i < Main.Tiles.size(); i++) {
+          if (Main.Tiles.get(i).hasMine && !Main.Tiles.get(i).flag) {
+            win = false;
+            break;
+          }
+        }
+        if (win) {
+          Main.winLose = 2;
+          System.out.println("You win!");
+        }
+      } else if (!exposed) {
+        changeImage(squareImage, "Images/MinesweeperUnknown.png");
+        scaleImage(squareSize, squareSize, squareImage);
+        flag = false;
       }
-    }, 2000);
+      square.repaint();
+    }
   }
 
 
@@ -243,6 +249,7 @@ public class Tile extends Screen {
         firstTile = false;
       }
       leftClick();
+      getFrame().repaint();
     }
   }
   @Override

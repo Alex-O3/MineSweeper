@@ -12,14 +12,8 @@ public class Main {
     public static final int NUM_MINES = 32;
     public static final int BUFFER_SIZE = 10;
     public static final ArrayList<Tile> Tiles = new ArrayList<Tile>();
+    public static int winLose = 0;
     public static void main(String[] args) {
         screen.setScreen();
     }
-    
-    /*public static ImageIcon scaleImage(ImageIcon input, int width, int height) {
-        Image input2 = input.getImage();
-        Image scaled = input2.getScaledInstance(width, height, Image.SCALE_DEFAULT);
-        input = new ImageIcon(scaled);
-        return(input);
-    }*/
 }
