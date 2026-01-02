@@ -208,17 +208,6 @@ public class Tile extends Screen {
         changeImage(squareImage, "Images/MinesweeperFlag.png");
         scaleImage(squareSize, squareSize, squareImage);
         flag = true;
-        boolean win = true;
-        for (int i = 0; i < Main.Tiles.size(); i++) {
-          if (Main.Tiles.get(i).hasMine && !Main.Tiles.get(i).flag) {
-            win = false;
-            break;
-          }
-        }
-        if (win) {
-          Main.winLose = 2;
-          System.out.println("You win!");
-        }
       } else if (!exposed) {
         changeImage(squareImage, "Images/MinesweeperUnknown.png");
         scaleImage(squareSize, squareSize, squareImage);
@@ -226,6 +215,21 @@ public class Tile extends Screen {
       }
       square.repaint();
     }
+    if (winDetect()) {
+      Main.winLose = 2;
+      System.out.println("You win!");
+    }
+  }
+
+  private boolean winDetect() {
+    boolean win = true;
+    for (int i = 0; i < Main.Tiles.size(); i++) {
+      if ((Main.Tiles.get(i).hasMine && !Main.Tiles.get(i).flag) || (!Main.Tiles.get(i).hasMine && Main.Tiles.get(i).flag)) {
+        win = false;
+        break;
+      }
+    }
+    return win;
   }
 
 
