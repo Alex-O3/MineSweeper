@@ -241,19 +241,20 @@ public class Tile extends Screen {
   }
   @Override
   public void mouseClicked (MouseEvent e) {
-    if (e.getButton() == MouseEvent.BUTTON3) {
-      rightClick();
-    }
-    else if (e.getButton() == MouseEvent.BUTTON1) {
-      if (firstTile) {
-        randomizeMines(Main.NUM_MINES, ID);
-        for (int i = 0; i < Main.Tiles.size(); i = i + 1) {
-          Main.Tiles.get(i).setNeighbors();
+    if (!e.getSource().getClass().equals(getFrame().getClass()) ){
+      if (e.getButton() == MouseEvent.BUTTON3) {
+        rightClick();
+      } else if (e.getButton() == MouseEvent.BUTTON1) {
+        if (firstTile) {
+          randomizeMines(Main.NUM_MINES, ID);
+          for (int i = 0; i < Main.Tiles.size(); i = i + 1) {
+            Main.Tiles.get(i).setNeighbors();
+          }
+          firstTile = false;
         }
-        firstTile = false;
+        leftClick();
+        getFrame().repaint();
       }
-      leftClick();
-      getFrame().repaint();
     }
   }
   @Override
